@@ -1,0 +1,29 @@
+service: sls-fb-msg-bot
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  stage: dev
+  region: ap-northeast-1
+
+functions:
+  webhook:
+    handler: handler.webhook
+    events:
+      - http:
+          path: webhook
+          method: GET
+      - http:
+          path: webhook
+          method: POST
+          response:
+            template: '{ "body": "$input.json(''$'')" }'
+
+custom:
+  stageVariables:
+    validationToken: 'Your_Validation_Token'
+    pageAccessToken: 'EAAZAcrFzLFdsBAOZCUL378sPdpKbzjNnHBuashK8AlZADcWZC56gUZCi7fyjmw5GgD9ccgDpz1gXVXuPmkICZBVwwfDBwBIKWpAz7zY17fGeoxx7Df4Db9VvFGapLeoZBKdzZBxGAh4KX0vxMkuJWaluADLRwSsYzp8R1kUrDMyoswZDZD'
+plugins:
+  - serverless-plugin-stage-variables
+
+
