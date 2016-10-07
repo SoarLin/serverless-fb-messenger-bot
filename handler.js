@@ -2,6 +2,31 @@
 
 const request = require('request');
 
+function sendQuickReply(recipientId) {
+    var messageData = {
+        recipient: {
+            id: recipientId
+        },
+        message: {
+            text: "What's your favorite movie genre?",
+            metadata: "DEVELOPER_DEFINED_METADATA",
+            quick_replies: [{
+                "content_type": "text",
+                "title": "Action",
+                "payload": "You like action movie"
+            }, {
+                "content_type": "text",
+                "title": "Comedy",
+                "payload": "You like comedy movie"
+            }, {
+                "content_type": "text",
+                "title": "Drama",
+                "payload": "You like drama movie"
+            }]
+        }
+    };
+    return messageData;
+}
 function sendTextMessage(recipientId, messageText) {
     var messageData = {
         recipient: {
@@ -21,9 +46,9 @@ function display(object) {
 module.exports.webhook = (event, context, callback) => {
     console.log('Event: ', display(event));
 
-    // FB粉絲專頁存取權杖
+    // FB Page access token
     const PAGE_ACCESS_TOKEN = event.stageVariables.pageAccessToken;
-    // FB webhook驗證token
+    // FB webhook validation token
     const VALIDATION_TOKEN = event.stageVariables.validationToken;
 
     if (!VALIDATION_TOKEN) {
@@ -66,23 +91,33 @@ module.exports.webhook = (event, context, callback) => {
 
             messagingList.forEach(function(messagingEvent) {
                 if (messagingEvent.message) {
-                    // 收到使用者訊息
-                    let messageData = sendTextMessage(messagingEvent.sender.id, "你好，我是聊天機器人BOT");
+                    // Received user message
+                    let messageData;
+                    if (messagingEvent.message.text === "hello") {
+                        messageData = sendQuickReply(messagingEvent.sender.id);
+                    } else {
+                        if (messagingEvent.message.quick_reply) {
+                            let tmp = messagingEvent.message.quick_reply.payload;
+                            messageData = sendTextMessage(messagingEvent.sender.id, tmp);
+                        } else {
+                            messageData = sendTextMessage(messagingEvent.sender.id, "Hello, I am messenger bot\nYou can say \"hello\" to me");
+                        }
+                    }
                     callSendAPI(messageData);
                 }
                 else if (messagingEvent.delivery) {
-                    // 僅記錄log不動作
+                    // only logging
                     var watermark = messagingEvent.delivery.watermark;
                     console.log("All message before %d were delivered.", watermark);
                 }
                 else if (messagingEvent.postback) {
-                    // 收到使用者互動回傳
+                    // Received user postback
                     var payload = messagingEvent.postback.payload;
-                    let messageData = sendTextMessage(messagingEvent.sender.id, display(payload));
+                    let messageData = sendTextMessage(messagingEvent.sender.id, "You received user postback");
                     callSendAPI(messageData);
                 }
                 else if (messagingEvent.read) {
-                    // 僅記錄log不動作
+                    // only logging
                     console.log("Received message read event for watermark %d and sequence " +
                         "number %d", messagingEvent.read.watermark, messagingEvent.read.seq);
                 } else {
