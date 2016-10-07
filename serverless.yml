@@ -25,8 +25,8 @@ custom:
   stageVariables:
 
     # Remeber to setting your variables
-    validationToken: 'Your_Validation_Token'
     pageAccessToken: 'FB_Page_Access_Token'
+    validationToken: 'Your_Validation_Token'
 
 plugins:
   - serverless-plugin-stage-variables
