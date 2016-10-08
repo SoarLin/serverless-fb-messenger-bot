@@ -1,7 +1,7 @@
 {
   "name": "serverless-facebook-messenger-chatbot",
   "version": "1.0.1",
-  "description": "<!-- MarkdownTOC -->",
+  "description": "Build a Serverless Facebook Messenger Chatbot",
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
