@@ -69,7 +69,7 @@ module.exports.webhook = (event, context, callback) => {
                 context.succeed("Successfully");
             } else {
                 console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
-                context.fail(new Error('Failed Send API: statusCode=' + response.statusCode + ', statusMessage=' + response.statusMessage + ', error='+ body.error));
+                context.fail(new Error('Failed Send API: statusCode=' + response.statusCode + ', statusMessage=' + response.statusMessage));
             }
         });
     }
@@ -92,7 +92,7 @@ module.exports.webhook = (event, context, callback) => {
             messagingList.forEach(function(messagingEvent) {
                 if (messagingEvent.message) {
                     // Received user message
-                    let messageData;
+                    var messageData;
                     if (messagingEvent.message.text === "hello") {
                         messageData = sendQuickReply(messagingEvent.sender.id);
                     } else {
